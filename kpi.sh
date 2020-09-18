@@ -15,7 +15,6 @@ path() {
 SCRIPT_PATH=$(path "$0")
 
 . $SCRIPT_PATH/libs/logger.inc
-. $SCRIPT_PATH/libs/path.inc
 . $SCRIPT_PATH/libs/utils.inc
 . $SCRIPT_PATH/libs/core.inc
 . $SCRIPT_PATH/libs/shell.inc

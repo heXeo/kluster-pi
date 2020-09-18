@@ -34,3 +34,11 @@ function kpish_node_rm_handler() {
 function kpish_node_setimg_handler() {
   node_setimg "$2" "$3"
 }
+
+function kpish_node_attach_handler() {
+  node_attach "$2" "$3"
+}
+
+function kpish_node_detach_handler() {
+  node_detach "$2"
+}

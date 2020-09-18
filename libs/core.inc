@@ -135,9 +135,25 @@ function node_create() {
 function node_attach() {
   [[ -z "$1" || -z "$2" ]] && return 1
 
+  local node_id="$1"
+  local serial="$2"
   local nodes_path="$KPI_BASE_DIR/nodes"
   local tftp_path="$KPI_BASE_DIR/tftp"
   local nfs_path="$KPI_BASE_DIR/nfs"
+
+  [[ ! -d "$nodes_path/$node_id" ]] && return 1
+  [[ ! -L "$nodes_path/$node_id/image" ]] && return 1
+
+  node_detach "$node_id"
+  echo "$serial" > "$nodes_path/$node_id/serial"
+
+  mkdir -p "$tftp_path"
+  ln -s "$nodes_path/$node_id/bootfs" "$tftp_path/$serial"
+
+  mkdir -p "$nfs_path/$node_id"
+  ln -s "$nodes_path/$node_id/rootfs" "$nfs_path/$node_id/rootfs"
+  ln -s "$nodes_path/$node_id/bootfs" "$nfs_path/$node_id/bootfs"
+
   return 0
 }
 
@@ -151,10 +167,10 @@ function node_detach() {
   [[ -f "$nodes_path/$node_id/serial" ]] && {
     local serial=$(<"$nodes_path/$node_id/serial")
     rm "$tftp_path/$serial"
-    rm "$node_path/$node_id/serial"
+    rm "$nodes_path/$node_id/serial"
   }
-  [[ -L "$nfs_path/$node_id" ]] && {
-    rm "$nfs_path/$node_id"
+  [[ -d "$nfs_path/$node_id" ]] && {
+    rm -rf "$nfs_path/$node_id"
   }
   return 0
 }
@@ -190,7 +206,7 @@ function node_ls() {
     [[ -f "$path/serial" ]] && {
       node_serial=$(<"$path/serial")
     }
-    nodes_ref+=("$node_id:$node_img_id::$node_name")
+    nodes_ref+=("$node_id:$node_img_id:$node_serial:$node_name")
   done
   return 0
 }

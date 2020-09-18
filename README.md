@@ -54,5 +54,5 @@
 - [x] node ls
 - [x] node rename <id> <name>
 - [x] node setimg <id>
-- [ ] node attach <id> <serial>
+- [x] node attach <id> <serial>
 - [x] node detach <id>
