@@ -1,3 +1,17 @@
+# Depends on
+
+```
+linux-kernel >= 4.16
+bash >= 4
+util-linux
+dnsmasq
+p7zip
+curl
+file
+nfs-kernel-server
+ncurses-bin
+```
+
 # Dirs
 
 ```text
@@ -16,23 +30,19 @@
 /nodes/[id]/name
 /nodes/[id]/serial
 /nodes/[id]/image -> /images/[id]
+/nodes/[id]/bootfs -> rootfs/boot
+/nodes/[id]/rootfs_ro -> /images/[id]/rootfs
 /nodes/[id]/rootfs_rw
 /nodes/[id]/rootfs_work
 /nodes/[id]/rootfs (overlay lower=image/rootfs,upper=rootfs_rw,work=rootfs_work rootfs)
-/nodes/[id]/bootfs_rw
-/nodes/[id]/bootfs_work
-/nodes/[id]/bootfs (overlay lower=image/bootfs,upper=bootfs_rw,work=bootfs_work bootfs)
 
 /tftp/bootcode.bin -> /bootcode/[id]/bootcode.bin
 /tftp/[serial] -> /nodes/[id]/bootfs
-
-/nfs/[node_id]/rootfs -> /nodes/[id]/rootfs
-/nfs/[node_id]/bootfs -> /nodes/[id]/bootfs
 ```
 
 # CLI
 
-## bootcode
+## bootcode (only required for rpi < 4)
 
 - [ ] bootcode get <id> <img_id>
 - [ ] bootcode rm <id>
@@ -49,10 +59,44 @@
 
 ## nodes
 
-- [ ] node create <name> <img_id>
+- [x] node create <name> [img_id]
 - [x] node rm <id>
 - [x] node ls
 - [x] node rename <id> <name>
 - [x] node setimg <id>
 - [x] node attach <id> <serial>
 - [x] node detach <id>
+
+## nfs
+
+- [ ] nfs start
+- [ ] nfs stop
+- [ ] nfs restart
+- [ ] nfs status
+- [ ] nfs clients
+- [ ] nfs endpoints
+
+## dnsmasq
+
+- [ ] dnsmasq start
+- [ ] dnsmasq stop
+- [ ] dnsmasq restart
+- [ ] dnsmasq status
+- [ ] dnsmasq range [ip]
+
+# /etc/default/dnsmasq
+
+```
+ENABLED=1
+DNSMASQ_OPTS="-p0"
+```
+
+# /etc/dnsmasq.conf
+
+```
+dhcp-range=10.211.55.255,proxy
+log-dhcp
+enable-tftp
+tftp-root=/var/lib/kpi/tftp
+pxe-service=0,"Raspberry Pi Boot"
+```

@@ -6,7 +6,7 @@ function kpish_image_commands() {
 }
 
 function kpish_image_get_handler() {
-  file=file:///mnt/downloads/ubuntu-server-20.04-arm64.tar.7z
+  file=file:///media/psf/Home/Drive/Personal/Projects/kpictl/downloads/ubuntu-server-20.04-arm64.tar.7z
   log "Downloading and extracting $(basename "$file") ..."
   image_get "$file"
 

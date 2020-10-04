@@ -27,7 +27,7 @@ SCRIPT_PATH=$(path "$0")
 # Script starts here !
 
 DEBUG=1
-KPI_BASE_DIR=/opt/opt
+KPI_BASE_DIR=/var/lib/kpi
 
 trap 'on_exit' EXIT
 trap 'on_error' ERR
@@ -40,18 +40,7 @@ function on_error() {
   return
 }
 
-function create_test_node() {
-  echo "YOLO"
-  mkdir -p "$KPI_BASE_DIR/nodes/1"
-  mkdir -p "$KPI_BASE_DIR/images/1"
-  echo "1" > "$KPI_BASE_DIR/images/1/id"
-  # ln -s "$KPI_BASE_DIR/images/1" "$KPI_BASE_DIR/nodes/1/image"
-  echo "node-test" > "$KPI_BASE_DIR/nodes/1/name"
-}
-
 function main() {
-  create_test_node
-
   history -r "$SCRIPT_PATH/.history"
   while true
   do
@@ -63,6 +52,7 @@ function main() {
   exit 1
 }
 
+mount_nodes
 main $@
 
 # https://cdimage.ubuntu.com/releases/20.04.1/release/ubuntu-20.04.1-preinstalled-server-arm64+raspi.img.xz

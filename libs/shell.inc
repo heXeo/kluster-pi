@@ -2,7 +2,7 @@
 . $SCRIPT_PATH/libs/utils.inc
 . $SCRIPT_PATH/libs/colors.inc
 
-KPISH_PROMPT="$LIGHT_GREEN[kpictl]$ $BLANK"
+KPISH_PROMPT="\x01$BOLD\x02\x01$GREEN\x02[kpictl]$ \x01$BLANK\x02"
 KPISH_ARGS=()
 
 function kpish_read() {
