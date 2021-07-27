@@ -144,9 +144,10 @@ function node_mount() {
   local node_path="$KPI_BASE_DIR/nodes/$node_id"
 
   [[ ! -d "$node_path" ]] && return $R_NODE_NOT_FOUND
+  [[ ! -L "$node_path/image" ]] && return $R_OK
 
-  node_mount_rootfs "$node_id"
-  node_mount_bootfs "$node_id"
+  node_mount_rootfs "$node_id" || return $?
+  node_mount_bootfs "$node_id" || return $?
 
   return $R_OK
 }
@@ -159,8 +160,8 @@ function node_unmount() {
 
   [[ ! -d "$node_path" ]] && return $R_NODE_NOT_FOUND
 
-  node_unmount_rootfs "$node_id"
-  node_unmount_bootfs "$node_id"
+  node_unmount_rootfs "$node_id" || return $?
+  node_unmount_bootfs "$node_id" || return $?
 
   return $R_OK
 }
@@ -173,7 +174,7 @@ function node_rm() {
 
   [[ ! -d "$node_path" ]] && return $R_NODE_NOT_FOUND
 
-  node_unmount "$node_id"
+  node_unmount "$node_id" || return $?
   rm -rf "$node_path"
 
   node_event_handler "deleted" "$node_id"
@@ -193,7 +194,8 @@ function node_mount_rootfs() {
   [[ "$?" == "0" ]] && return $R_MOUNT_ERROR
 
   node_event_handler "rootfs_mount" "$node_id"
-  mount -t overlay overlay -o lowerdir="$node_path/rootfs_ro",upperdir="$node_path/rootfs_rw",workdir="$node_path/rootfs_work" "$node_path/rootfs" -o index=on -o nfs_export=on
+  mount -t overlay overlay -o \
+    lowerdir="$node_path/rootfs_ro",upperdir="$node_path/rootfs_rw",workdir="$node_path/rootfs_work" "$node_path/rootfs" -o index=on -o nfs_export=on || return $R_MOUNT_ERROR
   node_event_handler "rootfs_mounted" "$node_id"
 
   return $R_OK
@@ -208,10 +210,10 @@ function node_unmount_rootfs() {
   [[ ! -d "$node_path" ]] && return $R_NODE_NOT_FOUND
 
   findmnt -M "$node_path/rootfs" > /dev/null 2>&1
-  [[ "$?" == "1" ]] && return $R_MOUNT_ERROR
+  [[ "$?" == "1" ]] && return $R_OK # Nothing to do
 
   node_event_handler "rootfs_unmount" "$node_id"
-  umount "$node_path/rootfs"
+  umount "$node_path/rootfs" || return $R_MOUNT_ERROR
   node_event_handler "rootfs_unmounted" "$node_id"
 
   return $R_OK
@@ -225,15 +227,16 @@ function node_mount_bootfs() {
   local tftp_path="$KPI_BASE_DIR/tftp"
 
   [[ ! -d "$node_path" ]] && return $R_NODE_NOT_FOUND
-  [[ ! -f "$node_path/serial" ]] && return $R_NODE_NOT_FOUND
+  [[ ! -f "$node_path/serial" ]] && return $R_NOK
 
   local node_serial=$(<"$node_path/serial")
 
+  [[ ! -d "$tftp_path" ]] && mkdir -p "$tftp_path"
   [[ -z "$node_serial" ]] && return $R_NOK
   [[ -L "$tftp_path/$node_serial" ]] && return $R_NOK
 
   node_event_handler "bootfs_mount" "$node_id"
-  ln -s "$node_path/bootfs" "$tftp_path/$node_serial"
+  ln -s "$node_path/bootfs" "$tftp_path/$node_serial" || return $R_MOUNT_ERROR
   node_event_handler "bootfs_mounted" "$node_id"
 
   return $R_OK
@@ -247,7 +250,7 @@ function node_unmount_bootfs() {
   local tftp_path="$KPI_BASE_DIR/tftp"
 
   [[ ! -d "$node_path" ]] && return $R_NODE_NOT_FOUND
-  [[ ! -f "$node_path/serial" ]] && return $R_NODE_NOT_FOUND
+  [[ ! -f "$node_path/serial" ]] && return $R_OK # Nothing to do
 
   local node_serial=$(<"$node_path/serial")
 
@@ -255,7 +258,7 @@ function node_unmount_bootfs() {
   [[ ! -L "$tftp_path/$node_serial" ]] && return $R_NOK
 
   node_event_handler "bootfs_unmount" "$node_id"
-  rm "$tftp_path/$node_serial"
+  rm "$tftp_path/$node_serial" || return $R_MOUNT_ERROR
   node_event_handler "bootfs_unmounted" "$node_id"
 
   return $R_OK
@@ -270,7 +273,8 @@ function mount_nodes() {
   do
     [[ ! -d "$path" ]] && continue
     local node_id=$(basename $path)
-    node_mount "$node_id"
+    local node_name=$(<"$path/name")
+    node_mount "$node_id" || error "Failed to mount $node_name"
   done
 
   return $R_OK
@@ -285,7 +289,7 @@ function unmount_nodes() {
   do
     [[ ! -d "$path" ]] && continue
     local node_id=$(basename $path)
-    node_unmount "$node_id"
+    node_unmount "$node_id" || error "Failed to unmount $node_name"
   done
 
   return $R_OK
