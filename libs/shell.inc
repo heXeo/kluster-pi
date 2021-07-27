@@ -32,7 +32,6 @@ function kpish_handle() {
   # debug "args = ${@:2}"
 
   [[ "$module" == "root" && -z "$command" ]] && return
-  [[ "$module" == "root" && "$command" == "exit" ]] && exit 0
 
   [[ -n "$command" && "$command" != "?" ]] && {
     [[ " $commands " =~ " $command " ]] && {
