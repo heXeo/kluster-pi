@@ -56,7 +56,7 @@ function node_create() {
 
   [[ -n "$image_id" ]] && node_setimg "$node_id" "$image_id"
 
-  on_node_created "$node_id"
+  node_event_handler "created" "$node_id"
 
   return $R_OK
 }
@@ -72,7 +72,7 @@ function node_rename() {
 
   echo "$node_name" > "$node_path/name"
 
-  on_node_renamed "$node_id"
+  node_event_handler "renamed" "$node_id"
 
   return $R_OK
 }
@@ -170,7 +170,7 @@ function node_rm() {
   node_unmount "$node_id"
   rm -rf "$node_path"
 
-  on_node_deleted "$node_id"
+  node_event_handler "deleted" "$node_id"
 
   return $R_OK
 }
@@ -186,9 +186,9 @@ function node_mount_rootfs() {
   findmnt -M "$node_path/rootfs" > /dev/null 2>&1
   [[ "$?" == "0" ]] && return $R_MOUNT_ERROR
 
-  on_node_rootfs_mount "$node_id"
+  node_event_handler "rootfs_mount" "$node_id"
   mount -t overlay overlay -o lowerdir="$node_path/rootfs_ro",upperdir="$node_path/rootfs_rw",workdir="$node_path/rootfs_work" "$node_path/rootfs" -o index=on -o nfs_export=on
-  on_node_rootfs_mounted "$node_id"
+  node_event_handler "rootfs_mounted" "$node_id"
 
   return $R_OK
 }
@@ -204,9 +204,9 @@ function node_unmount_rootfs() {
   findmnt -M "$node_path/rootfs" > /dev/null 2>&1
   [[ "$?" == "1" ]] && return $R_MOUNT_ERROR
 
-  on_node_rootfs_unmount "$node_id"
+  node_event_handler "rootfs_unmount" "$node_id"
   umount "$node_path/rootfs"
-  on_node_rootfs_unmounted "$node_id"
+  node_event_handler "rootfs_unmounted" "$node_id"
 
   return $R_OK
 }
@@ -226,9 +226,9 @@ function node_mount_bootfs() {
   [[ -z "$node_serial" ]] && return $R_NOK
   [[ -L "$tftp_path/$node_serial" ]] && return $R_NOK
 
-  on_node_bootfs_mount "$node_id"
+  node_event_handler "bootfs_mount" "$node_id"
   ln -s "$node_path/bootfs" "$tftp_path/$node_serial"
-  on_node_bootfs_mounted "$node_id"
+  node_event_handler "bootfs_mounted" "$node_id"
 
   return $R_OK
 }
@@ -248,9 +248,9 @@ function node_unmount_bootfs() {
   [[ -z "$node_serial" ]] && return $R_NOK
   [[ ! -L "$tftp_path/$node_serial" ]] && return $R_NOK
 
-  on_node_bootfs_unmount "$node_id"
+  node_event_handler "bootfs_unmount" "$node_id"
   rm "$tftp_path/$node_serial"
-  on_node_bootfs_unmounted "$node_id"
+  node_event_handler "bootfs_unmounted" "$node_id"
 
   return $R_OK
 }

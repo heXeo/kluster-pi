@@ -3,69 +3,15 @@
 
 # Events handlers
 
-function on_node_created() {
-  return 0
-}
-
-function on_node_renamed() {
-  local node_id="$1"
+function node_event_handler() {
+  local event_name="$1"
+  local node_id="$2"
   local node_path="$KPI_BASE_DIR/nodes/$node_id"
-  local node_name=$(<"$node_path/name")
-  
-  findmnt -M "$node_path/rootfs" > /dev/null 2>&1
-  [[ "$?" == "1" ]] && return 0
 
-  echo "$node_name" > "$node_path/rootfs/etc/hostname"
+  [[ -x $node_path/events_handler ]] && {
+    $node_path/events_handler "node_$1" "$node_path"
+  }
 
-  return 0
-}
-
-function on_node_deleted() {
-  return 0
-}
-
-function on_node_rootfs_mount() {
-  return 0
-}
-
-function on_node_rootfs_mounted() {
-  local node_id="$1"
-  local node_path="$KPI_BASE_DIR/nodes/$node_id"
-  local node_name=$(<"$node_path/name")
-
-  nfs_export "$node_id" "$node_path/rootfs"
-
-  findmnt -M "$node_path/rootfs" > /dev/null 2>&1
-  [[ "$?" == "1" ]] && return 0
-
-  echo "$node_name" > "$node_path/rootfs/etc/hostname"
-  
-  return 0
-}
-
-function on_node_rootfs_unmount() {
-  local node_id="$1"
-  nfs_unexport "$node_id"
-  return 0
-}
-
-function on_node_rootfs_unmounted() {
-  return 0
-}
-
-function on_node_bootfs_mount() {
-  return 0
-}
-
-function on_node_bootfs_mounted() {
-  return 0
-}
-
-function on_node_bootfs_unmount() {
-  return 0
-}
-
-function on_node_bootfs_unmounted() {
   return 0
 }
 
