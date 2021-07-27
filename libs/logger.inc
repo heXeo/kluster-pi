@@ -4,6 +4,14 @@ function log() {
   echo -e "$@"
 }
 
+function info() {
+  log "${BLUE}$@${BLANK}"
+}
+
+function log_success() {
+  log "${GREEN}✓ $@${BLANK}"
+}
+
 function debug() {
   [[ "$DEBUG" == "1" ]] && log "${YELLOW}DEBUG: $@${BLANK}"
 }
