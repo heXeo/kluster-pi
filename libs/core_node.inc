@@ -191,7 +191,7 @@ function node_mount_rootfs() {
   [[ ! -d "$node_path" || ! -d "$node_path/rootfs_ro" ]] && return $R_NODE_NOT_FOUND
 
   findmnt -M "$node_path/rootfs" > /dev/null 2>&1
-  [[ "$?" == "0" ]] && return $R_MOUNT_ERROR
+  [[ "$?" == "0" ]] && return $R_OK # Nothing to do
 
   node_event_handler "rootfs_mount" "$node_id"
   mount -t overlay overlay -o \
@@ -233,7 +233,7 @@ function node_mount_bootfs() {
 
   [[ ! -d "$tftp_path" ]] && mkdir -p "$tftp_path"
   [[ -z "$node_serial" ]] && return $R_NOK
-  [[ -L "$tftp_path/$node_serial" ]] && return $R_NOK
+  [[ -L "$tftp_path/$node_serial" ]] && return $R_OK # Nothing to do
 
   node_event_handler "bootfs_mount" "$node_id"
   ln -s "$node_path/bootfs" "$tftp_path/$node_serial" || return $R_MOUNT_ERROR
