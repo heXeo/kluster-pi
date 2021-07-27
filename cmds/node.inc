@@ -71,6 +71,15 @@ function on_node_bootfs_unmounted() {
 
 # Commands handlers
 
+function node_exit_code_handler() {
+  local exit_code="$1"
+  [[ "$exit_code" -eq $R_NOK ]] && error "Unknown error."
+  [[ "$exit_code" -eq $R_TOO_FEW_ARGUMENTS ]] && error "Too few arguments."
+  [[ "$exit_code" -eq $R_NODE_NOT_FOUND ]] && error "Node not found."
+  [[ "$exit_code" -eq $R_IMAGE_NOT_FOUND ]] && error "Image not found."
+  return 0
+}
+
 function kpish_node_commands() {
   echo "create rm ls rename setimg attach detach"
 }
@@ -88,11 +97,14 @@ function kpish_node_help() {
 
 function kpish_node_create_handler() {
   node_create "$2" "$3"
+  node_exit_code_handler "$?" || return 1
+  return 0
 }
 
 function kpish_node_ls_handler() {
   local nodes=()
   node_ls nodes
+  node_exit_code_handler "$?" || return 1
   
   log "${LIGHT_WHITE}id\timg id\tserial\tname${BLANK}"
 
@@ -106,24 +118,36 @@ function kpish_node_ls_handler() {
     local node_name=${node##*:}
     log "$node_id\t$node_img_id\t$node_serial\t$node_name"
   done
+
+  return 0
 }
 
 function kpish_node_rename_handler() {
   node_rename "$2" "$3"
+  node_exit_code_handler "$?" || return 1
+  return 0
 }
 
 function kpish_node_rm_handler() {
   node_rm "$2"
+  node_exit_code_handler "$?" || return 1
+  return 0
 }
 
 function kpish_node_setimg_handler() {
   node_setimg "$2" "$3"
+  node_exit_code_handler "$?" || return 1
+  return 0
 }
 
 function kpish_node_attach_handler() {
   node_attach "$2" "$3"
+  node_exit_code_handler "$?" || return 1
+  return 0
 }
 
 function kpish_node_detach_handler() {
   node_detach "$2"
+  node_exit_code_handler "$?" || return 1
+  return 0
 }
