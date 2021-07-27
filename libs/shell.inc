@@ -26,10 +26,10 @@ function kpish_handle() {
     commands=$(kpish_${module}_commands)
   }
 
-  # debug "module = ${module}"
-  # debug "command = $command"
-  # debug "commands = $commands"
-  # debug "args = ${@:2}"
+  debug "module = ${module}"
+  debug "command = $command"
+  debug "commands = $commands"
+  debug "args = ${@:2}"
 
   [[ "$module" == "root" && -z "$command" ]] && return
 

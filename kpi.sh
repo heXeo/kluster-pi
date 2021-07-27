@@ -26,7 +26,7 @@ SCRIPT_PATH=$(path "$0")
 
 # Script starts here !
 
-DEBUG=1
+DEBUG="${DEBUG:-0}"
 KPI_BASE_DIR=/var/lib/kpi
 
 trap 'on_exit' EXIT
@@ -54,5 +54,3 @@ function main() {
 
 mount_nodes
 main $@
-
-# https://cdimage.ubuntu.com/releases/20.04.1/release/ubuntu-20.04.1-preinstalled-server-arm64+raspi.img.xz
