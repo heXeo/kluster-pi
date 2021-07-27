@@ -97,6 +97,8 @@ function node_setimg() {
   cp -a "$image_path/bootfs" "$node_path/bootfs"
   node_mount_rootfs "$node_id"
 
+  node_event_handler "image" "$node_id"
+
   return $R_OK
 }
 
@@ -114,6 +116,8 @@ function node_attach() {
   echo "$node_serial" > "$node_path/serial"
   node_mount_bootfs "$node_id"
 
+  node_event_handler "attached" "$node_id"
+
   return $R_OK
 }
 
@@ -127,6 +131,8 @@ function node_detach() {
 
   node_unmount_bootfs "$node_id"
   rm "$node_path/serial"
+
+  node_event_handler "detached" "$node_id"
 
   return $R_OK
 }
