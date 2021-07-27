@@ -75,6 +75,17 @@ function kpish_node_commands() {
   echo "create rm ls rename setimg attach detach"
 }
 
+function kpish_node_help() {
+  log "create <name> [img_id]"
+  log "rm <id>"
+  log "ls"
+  log "rename <id> <name>"
+  log "setimg <id> <image_id>"
+  log "attach <id> <serial>"
+  log "detach <id>"
+  log "options"
+}
+
 function kpish_node_create_handler() {
   node_create "$2" "$3"
 }

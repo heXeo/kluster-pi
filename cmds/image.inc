@@ -5,6 +5,13 @@ function kpish_image_commands() {
   echo "get rm ls rename"
 }
 
+function kpish_image_help() {
+  log "get <url>"
+  log "rm <id>"
+  log "ls"
+  log "rename <id> <name>"
+}
+
 function kpish_image_get_handler() {
   file=file:///media/psf/Home/Drive/Personal/Projects/kpictl/downloads/ubuntu-server-20.04-arm64.tar.7z
   log "Downloading and extracting $(basename "$file") ..."

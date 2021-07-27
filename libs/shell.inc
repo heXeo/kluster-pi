@@ -47,10 +47,13 @@ function kpish_handle() {
 
   [[ -z "$command" || "$command" == "?" ]] && {
     [[ -n "$commands" ]] && {
-      for cmd in $commands
-      do
-        log $cmd
-      done
+      local fn_help="kpish_${module}_help"
+      fn_exists $fn_help && $fn_help || {
+        for cmd in $commands
+        do
+          log $cmd
+        done
+      }
     } || {
       error "command not found."
     }
