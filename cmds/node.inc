@@ -8,11 +8,11 @@ function node_event_handler() {
   local node_id="$2"
   local node_path="$KPI_BASE_DIR/nodes/$node_id"
 
-  [[ -x $node_path/events_handler ]] && {
-    $node_path/events_handler "node_$1" "$node_path"
+  [[ -x "$node_path/image/events_handler" ]] && {
+    $node_path/image/events_handler "node_$1" "$node_path"
   }
 
-  return 0
+  return $R_OK
 }
 
 # Commands handlers
