@@ -9,7 +9,7 @@ function node_event_handler() {
   local node_path="$KPI_BASE_DIR/nodes/$node_id"
 
   [[ -x "$node_path/image/events_handler" ]] && {
-    $node_path/image/events_handler "node_$1" "$node_path"
+    $node_path/image/events_handler "node_$1" "$node_path" > /dev/null 2>&1 
   }
 
   return $R_OK
