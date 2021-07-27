@@ -56,7 +56,7 @@ function node_create() {
 
   [[ -n "$image_id" ]] && node_setimg "$node_id" "$image_id"
 
-  node_event_handler "created" "$node_id"
+  node_event_handler "created" "$node_id" "$node_name" "$image_id"
 
   return $R_OK
 }
@@ -72,7 +72,7 @@ function node_rename() {
 
   echo "$node_name" > "$node_path/name"
 
-  node_event_handler "renamed" "$node_id"
+  node_event_handler "renamed" "$node_id" "$node_name"
 
   return $R_OK
 }
@@ -97,7 +97,7 @@ function node_setimg() {
   # cp -a "$image_path/bootfs" "$node_path/bootfs" # Why ?!
   node_mount_rootfs "$node_id"
 
-  node_event_handler "image" "$node_id"
+  node_event_handler "image" "$node_id" "$image_id"
 
   return $R_OK
 }
@@ -116,7 +116,7 @@ function node_attach() {
   echo "$node_serial" > "$node_path/serial"
   node_mount_bootfs "$node_id"
 
-  node_event_handler "attached" "$node_id"
+  node_event_handler "attached" "$node_id" "$node_serial"
 
   return $R_OK
 }

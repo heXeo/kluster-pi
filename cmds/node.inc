@@ -7,9 +7,10 @@ function node_event_handler() {
   local event_name="$1"
   local node_id="$2"
   local node_path="$KPI_BASE_DIR/nodes/$node_id"
+  local args=${@:3}
 
   [[ -x "$node_path/image/events_handler" ]] && {
-    $node_path/image/events_handler "node_$1" "$node_path" > /dev/null 2>&1 
+    $node_path/image/events_handler "node_$1" "$node_path" $args > /dev/null 2>&1 
   }
 
   return $R_OK

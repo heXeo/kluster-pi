@@ -15,7 +15,7 @@ function node_option_add() {
     echo "$option_key=$option_value" >> "$node_path/options"
   }
 
-  node_event_handler "option_added" "$node_id"
+  node_event_handler "option_added" "$node_id" "$option_key" "$option_value"
 
   return $R_OK
 }
@@ -32,7 +32,7 @@ function node_option_del() {
 
   sed -Ei'' "/^${option_key}=.*$/d" "$node_path/options"
 
-  node_event_handler "option_deleted" "$node_id"
+  node_event_handler "option_deleted" "$node_id" "$option_key"
 
   return $R_OK
 }
