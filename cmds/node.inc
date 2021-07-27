@@ -81,7 +81,7 @@ function node_exit_code_handler() {
 }
 
 function kpish_node_commands() {
-  echo "create rm ls rename setimg attach detach"
+  echo "create rm ls rename setimg attach detach options"
 }
 
 function kpish_node_help() {
@@ -151,3 +151,40 @@ function kpish_node_detach_handler() {
   node_exit_code_handler "$?" || return 1
   return 0
 }
+
+function kpish_node_options_commands() {
+  echo "add del show"
+}
+
+function kpish_node_options_help() {
+  log "add <id> <key> <value>"
+  log "del <id> <key>"
+  log "show <id>"
+}
+
+function kpish_node_options_show_handler() {
+  local options=()
+  node_option_ls "$2" options
+  node_exit_code_handler "$?" || return 1
+
+  for option in "${options[@]}"
+  do
+    log "$option"
+  done
+
+  return 0
+}
+
+function kpish_node_options_add_handler() {
+  node_option_add "$2" "$3" "$4"
+  node_exit_code_handler "$?" || return 1
+  return 0
+}
+
+function kpish_node_options_del_handler() {
+  node_option_del "$2" "$3"
+  node_exit_code_handler "$?" || return 1
+  return 0
+}
+
+

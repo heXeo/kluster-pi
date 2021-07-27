@@ -29,6 +29,7 @@ ncurses-bin
 /nodes/[id]/id
 /nodes/[id]/name
 /nodes/[id]/serial
+/nodes/[id]/options
 /nodes/[id]/image -> /images/[id]
 /nodes/[id]/bootfs -> rootfs/boot
 /nodes/[id]/rootfs_ro -> /images/[id]/rootfs
@@ -63,9 +64,12 @@ ncurses-bin
 - [x] node rm <id>
 - [x] node ls
 - [x] node rename <id> <name>
-- [x] node setimg <id>
+- [x] node setimg <id> <img_id>
 - [x] node attach <id> <serial>
 - [x] node detach <id>
+- [ ] node option add <id> <key> <value>
+- [ ] node option del <id> <key>
+- [ ] node option show <id>
 
 ## nfs
 
