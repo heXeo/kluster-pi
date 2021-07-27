@@ -94,7 +94,7 @@ function node_setimg() {
   rm -rf "$node_path/rootfs_work/*"
   rm -rf "$node_path/rootfs/*"
   ln -s "$image_path" "$node_path/image"
-  # cp -a "$image_path/bootfs" "$node_path/bootfs" # Why ?!
+  cp -a "$image_path/bootfs" "$node_path/bootfs"
   node_mount_rootfs "$node_id"
 
   node_event_handler "image" "$node_id" "$image_id"
